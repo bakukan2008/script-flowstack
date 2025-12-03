@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  app:
+    image: harbor.nexpie.com/flowstack/nginx-proxy-manager:v1.0.1-3
+    restart: unless-stopped
+    environment:
+      - NPM_INIT_EMAIL=contact@nexpie.com
+      - NPM_INIT_PASSWORD=password
+    ports:
+      - '48080:80'
+      - '48081:81'
+      - '48443:443'
+    volumes:
+      - /usr/local/flowstack/volume/npm/data:/data
+      - /usr/local/flowstack/volume/npm/letsencrypt:/etc/letsencrypt
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "10"
+    networks:
+      - flowstack
+  
+# volumes:
+
+#   data-portainer:
+#     driver: local
+#     driver_opts:
+#       device: ./data
+#       type: none
+#       o: bind
+
+#   cert-portainer:
+#     driver: local
+#     driver_opts:
+#       device: ./letsencrypt
+#       type: none
+#       o: bind
+
+networks:
+  flowstack:
+    driver: bridge
