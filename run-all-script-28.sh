@@ -35,7 +35,7 @@ install_salt_minion() {
 }
 
 install_docker() {
-    echo "🚀 กำลังติดตั้ง Docker..."
+    echo "🚀 กำลังติดตั้ง Docker (เวอร์ชัน 28.x.x)..."
 
     # ลบแพ็คเกจที่อาจขัดแย้งกัน
     for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do 
@@ -44,7 +44,7 @@ install_docker() {
 
     # อัปเดตระบบและติดตั้งแพ็คเกจที่จำเป็น
     sudo apt-get update
-    sudo apt-get install -y ca-certificates curl
+    sudo apt-get install -y ca-certificates curl gnupg
 
     # สร้างโฟลเดอร์สำหรับ key และดาวน์โหลด GPG key ของ Docker
     sudo install -m 0755 -d /etc/apt/keyrings
@@ -59,12 +59,30 @@ install_docker() {
     # อัปเดตระบบอีกครั้ง
     sudo apt-get update
 
-    # ติดตั้ง Docker
-    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    echo "🔍 ตรวจสอบเวอร์ชัน Docker 28.x.x ที่มีให้ติดตั้ง..."
+    DOCKER_VERSION=$(apt-cache madison docker-ce | awk '/28\./ {print $3}' | head -n 1)
+
+    if [ -z "$DOCKER_VERSION" ]; then
+        echo "❌ ไม่พบ Docker เวอร์ชัน 28.x.x ใน repository!"
+        exit 1
+    fi
+
+    echo "➡️ จะติดตั้ง Docker เวอร์ชัน: $DOCKER_VERSION"
+
+    # ติดตั้ง Docker CE version 28.x.x
+    sudo apt-get install -y \
+        docker-ce="$DOCKER_VERSION" \
+        docker-ce-cli="$DOCKER_VERSION" \
+        containerd.io \
+        docker-buildx-plugin \
+        docker-compose-plugin
 
     # เปิดใช้งาน Docker
     sudo systemctl start docker
     sudo systemctl enable docker
+
+    # Lock version ป้องกันการอัปเดต
+    sudo apt-mark hold docker-ce docker-ce-cli docker-buildx-plugin docker-compose-plugin
 
     # เข้าสู่ระบบ Harbor
     echo "🚀 เข้าสู่ระบบ Docker Harbor..."
@@ -72,6 +90,7 @@ install_docker() {
     docker login dock.nexiiot.io -u marwan -p N3xP!e18
     echo "✅ Docker login สำเร็จ!"
 }
+
 
 setup_flowstack() {
     echo "🚀 กำลังตั้งค่า Flowstack..."
