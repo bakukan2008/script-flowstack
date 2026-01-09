@@ -87,7 +87,7 @@ install_docker() {
     # เข้าสู่ระบบ Harbor
     echo "🚀 เข้าสู่ระบบ Docker Harbor..."
     docker login harbor.nexpie.com -u robot\$flowstack-token -p U3ecZdKbBC08JsHu5d33gBjrE7EAnHbP
-    docker login dock.nexiiot.io -u marwan -p N3xP!e18
+    docker login dock.nexiiot.io -u robot\$pull-flowstack -p nhafR7SaNoJottQ6bUHpk9yK1FoQBteO
     echo "✅ Docker login สำเร็จ!"
 }
 
