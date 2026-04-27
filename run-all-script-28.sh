@@ -111,7 +111,7 @@ setup_flowstack() {
         cat <<EOF > "$DOCKER_COMPOSE_FILE"
 services:
   flowstack:
-    image: dock.nexiiot.io/application/flowstack:2.0-308-4bc5f647
+    image: dock.nexiiot.io/application/flowstack:2.0-309-f15c83c8
     restart: always
     privileged: true
     ports:
